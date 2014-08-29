@@ -1,0 +1,25 @@
+P9_11 28 0x870/070 UART4_RXD 30 gpio0[30] uart4_rxd_mux2 mmc1_sdcd rmii2_crs_dv gpmc_csn4 mii2_crs gpmc_wait0 T17 NB: GPIOs limit current to 4‐6mA output
+P9_12 30 0x878/078 GPIO1_28 60 gpio1[28] mcasp0_aclkr_mux3 gpmc_dir mmc2_dat3 gpmc_csn6 mii2_col gpmc_be1n U18 and approx. 8mA on input.
+P9_13 29 0x874/074 UART4_TXD 31 gpio0[31] uart4_txd_mux2 mmc2_sdcd rmii2_rxerr gpmc_csn5 mii2_rxerr gpmc_wpn U17
+P9_14 18 0x848/048 EHRPWM1A 50 gpio1[18] ehrpwm1A_mux1 gpmc_a18 mmc2_dat1 rgmii2_td3 mii2_txd3 gpmc_a2 U14
+P9_15 16 0x840/040 GPIO1_16 48 gpio1[16] ehrpwm1_tripzone_input gpmc_a16 mii2_txen rmii2_tctl gmii2_txen gpmc_a0 R13
+P9_16 19 0x84c/04c EHRPWM1B 51 gpio1[19] ehrpwm1B_mux1 gpmc_a19 mmc2_dat2 rgmii2_td2 mii2_txd2 gpmc_a3 T14
+P9_17 87 0x95c/15c I2C1_SCL 5 gpio0[5] ehrpwm0_synci I2C1_SCL mmc2_sdwp spi0_cs0 A16
+P9_18 86 0x958/158 I2C1_SDA 4 gpio0[4] ehrpwm0_tripzone I2C1_SDA mmc1_sdwp spi0_d1 B16
+P9_19 95 0x97c/17c I2C2_SCL 13 gpio0[13] spi1_cs1 I2C2_SCL dcan0_rx timer5 uart1_rtsn D17 Allocated (Group: pinmux_i2c2_pins)
+P9_20 94 0x978/178 I2C2_SDA 12 gpio0[12] spi1_cs0 I2C2_SDA dcan0_tx timer6 uart1_ctsn D18 Allocated (Group: pinmux_i2c2_pins)
+P9_21 85 0x954/154 UART2_TXD 3 gpio0[3] EMU3_mux1 ehrpwm0B I2C2_SCL uart2_txd spi0_d0 B17
+P9_22 84 0x950/150 UART2_RXD 2 gpio0[2] EMU2_mux1 ehrpwm0A I2C2_SDA uart2_rxd spi0_sclk A17
+P9_23 17 0x844/044 GPIO1_17 49 gpio1[17] ehrpwm0_synco gpmc_a17 mmc2_dat0 rgmii2_rxdv gmii2_rxdv gpmc_a1 V14
+P9_24 97 0x984/184 UART1_TXD 15 gpio0[15] I2C1_SCL dcan1_rx mmc2_sdwp uart1_txd D15
+P9_25 107 0x9ac/1ac GPIO3_21 117 gpio3[21] EMU4_mux2 mcasp1_axr1 mcasp0_axr3 eQEP0_strobe mcasp0_ahclkx A14 Allocated (Group: mcasp0_pins)
+P9_26 96 0x980/180 UART1_RXD 14 gpio0[14] I2C1_SDA dcan1_tx mmc1_sdwp uart1_rxd D16
+P9_27 105 0x9a4/1a4 GPIO3_19 115 gpio3[19] EMU2_mux2 mcasp1_fsx mcasp0_axr3 eQEP0B_in mcasp0_fsr C13
+P9_28 103 0x99c/19c SPI1_CS0 113 gpio3[17] eCAP2_in_PWM2_out spi1_cs0 mcasp0_axr2 ehrpwm0_synci mcasp0_ahclkr C12 Allocated (Group: mcasp0_pins)
+P9_29 101 0x994/194 SPI1_D0 111 gpio3[15] mmc1_sdcd_mux1 spi1_d0 ehrpwm0B mcasp0_fsx B13 Allocated (Group: mcasp0_pins)
+P9_30 102 0x998/198 SPI1_D1 112 gpio3[16] mmc2_sdcd_mux1 spi1_d1 ehrpwm0_tripzone mcasp0_axr0 D12
+P9_31 100 0x990/190 SPI1_SCLK 110 gpio3[14] mmc0_sdcd_mux1 spi1_sclk ehrpwm0A mcasp0_aclkx A13 Allocated (Group: mcasp0_pins)
+P9_41A 109 0x9b4/1b4 CLKOUT2 20 gpio0[20] EMU3_mux0 timer7_mux1 clkout2 tclkin xdma_event_intr1 D14 Both signals are connected to P21 of P11
+P9_41B 0x9a8/1a8 GPIO3_20 116 gpio3[20] emu3 Mcasp1_axr0 eQEP0_index mcasp0_axr1 D13 Both signals are connected to P21 of P11
+P9_42A 89 0x964/164 GPIO0_7 7 gpio0[7] xdma_event_intr2 mmc0_sdwp spi1_sclk pr1_ecap0_ecap_capin_apwm_o spi1_cs1 uart3_txd eCAP0_in_PWM0_out C18 Both signals are connected to P22 of P11
+P9_42B 0x9a0/1a0 GPIO3_18 114 gpio3[18]
