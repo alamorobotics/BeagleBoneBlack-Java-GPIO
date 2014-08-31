@@ -31,6 +31,7 @@ public class pinSetup {
 	public static final String DTS_END = "BB-AR-GPIO_end.txt";
 	public static final String RESOURCE_PATH = "com/alamorobotics/gpio/";
 	public static final String DTS_SLOT_NAME = "BB-AR-GPIO";
+	public static final String CAPE_BONE_IIO = "cape-bone-iio";
 
 	/**
 	 * Make a DTS file...

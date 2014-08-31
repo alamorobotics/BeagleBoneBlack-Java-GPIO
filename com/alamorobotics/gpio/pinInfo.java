@@ -31,8 +31,8 @@ public class pinInfo {
 	public int offset = 0x078;
 	public String pinName = "GPIO1_28";
 	public int gpioPinNum = 60;
-	public String direction = "Dummy";
-	public String pullupType = "Dummy";
+	public String direction = INPUT;
+	public String pullupType = NONE;
 	public String comment = "LED 01";
 	
 	// Reserved pins...

@@ -10,6 +10,22 @@ package com.alamorobotics.gpio;
 public class pinControl {
 
 	/**
+	 * Set pin high or low depending on value.
+	 * 
+	 * @param myPin
+	 * @param value
+	 * @throws Exception 
+	 */
+	public static void setPin(pinInfo myPin, boolean value) throws Exception {
+		// Test and set pin...
+		if (value) {
+			setPinHigh(myPin);
+		} else {
+			setPinLow(myPin);
+		}
+	}
+	
+	/**
 	 * Set a pin high
 	 * 
 	 * @param myPin

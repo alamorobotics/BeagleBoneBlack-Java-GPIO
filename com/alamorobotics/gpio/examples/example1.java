@@ -12,7 +12,10 @@ import com.alamorobotics.gpio.pinSetup;
  * https://www.youtube.com/watch?v=wui_wU1AeQc
  * https://learn.adafruit.com/introduction-to-the-beaglebone-black-device-tree/overview
  * 
- *  
+ * Compile,
+ * javac com/alamorobotics/gpio/examples/example1.java
+ * Run,
+ * java -cp . com.alamorobotics.gpio.examples.example1 
  * 
  * 
  * @author fredrik
