@@ -34,4 +34,10 @@ BB-AR-GPI is applied and the Slot number is: 9
 
 Beta stage...
 
+Version 0.12 Input example.
+
+Version 0.11 Output example.
+
 Version 0.1 Generate and compile DTS files. Apply the DTS files and use basic IO such as Input with pullup/pulldown and output.
+
+
