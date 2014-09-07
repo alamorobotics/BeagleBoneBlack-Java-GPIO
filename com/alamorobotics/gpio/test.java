@@ -10,6 +10,18 @@ public class test {
 
 	public static void main(String[] args) throws Exception {
 
+		// Check if the analog DTS is applied.
+		if (!pinSetup.isAnalogApplied()) {
+			System.out.println("cape-bone-iio is not applied.");
+			// If not, apply it.
+			pinSetup.AddAnalogDTS();
+		} else {
+			System.out.println("cape-bone-iio is already applied.");
+		}
+
+		// Print out current directory for the Analog inputs.
+		System.out.println("Analog Directory: " + pinSetup.getAnalogPath());		
+		
 		// Define some pins...
 		pinInfo myPin = pinInfo.getPinInfo("P9_11");
 		myPin.direction = pinInfo.OUTPUT;
@@ -146,12 +158,19 @@ public class test {
 		myPin = pinInfo.getPinInfo("P9_18");
 		pinControl.setPinLow(myPin);
 
+		
 		while (!pinControl.readPin(pinInfo.getPinInfo("P9_21"))) {
 			System.out.println("pinControl.readPin(P9_21) " + pinControl.readPin(pinInfo.getPinInfo("P9_21")));
 			System.out.println("pinControl.readPin(P9_22) " + pinControl.readPin(pinInfo.getPinInfo("P9_22")));
 			System.out.println("pinControl.readPin(P9_23) " + pinControl.readPin(pinInfo.getPinInfo("P9_23")));
+			System.out.println("Raw 0 " + pinInfo.ANALOG0 + ": " + pinControl.getRawAnalogValue(pinInfo.ANALOG0));
+			System.out.println("Raw 1 " + pinInfo.ANALOG1 + ": " + pinControl.getRawAnalogValue(pinInfo.ANALOG1));
+			System.out.println("Voltage 0 " + pinInfo.ANALOG0 + ": " + pinControl.getAnalogVoltage(pinInfo.ANALOG0));
+			System.out.println("Voltage 1 " + pinInfo.ANALOG1 + ": " + pinControl.getAnalogVoltage(pinInfo.ANALOG1));
+			System.out.println("Percent 0 " + pinInfo.ANALOG0 + ": " + pinControl.getAnalogPercentage(pinInfo.ANALOG0));
+			System.out.println("Percent 1 " + pinInfo.ANALOG1 + ": " + pinControl.getAnalogPercentage(pinInfo.ANALOG1));			
 			System.out.println();
-	    	Thread.sleep(100);
+	    	Thread.sleep(200);
 		}
 		
 		pinSetup.unExportPins();

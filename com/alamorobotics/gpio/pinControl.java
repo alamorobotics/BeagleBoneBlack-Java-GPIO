@@ -97,6 +97,68 @@ public class pinControl {
     }
     
     /**
+     * Get the raw analog value...
+     * 
+     * @param analogPin
+     * @return
+     * @throws Exception
+     */
+    public static String getRawAnalogValue(String analogPin) throws Exception {
+    	
+    	String value = "Unable to get Value.";
+        try{
+        	value = pinSetup.catPath(pinSetup.getAnalogPath() + "/" + analogPin); 
+        }
+        catch(Exception e){
+            throw new Exception("Unable get analog value for pin " + analogPin);
+        }    	
+        return value;
+    }
+
+    /**
+     * Convert to integer...
+     * 
+     * @param analogPin
+     * @return
+     * @throws Exception
+     */
+    public static int getRawIntAnalogValue(String analogPin) throws Exception {
+    	int value = 0;
+    	try {
+    		value = Integer.parseInt(getRawAnalogValue(analogPin));
+    	} catch (NumberFormatException nfe) {
+    		value = 0;
+    	}
+    	return value;
+    }
+
+    /**
+     * Get the voltage.
+     * 
+     * @param analogPin
+     * @return
+     * @throws Exception
+     */
+    public static double getAnalogVoltage(String analogPin) throws Exception {
+    	double voltage = getRawIntAnalogValue(analogPin)/1000.0;
+    	return voltage;
+    }
+    
+    /**
+     * Get the percentage.
+     * 
+     * @param analogPin
+     * @return
+     * @throws Exception
+     */
+    public static int getAnalogPercentage(String analogPin) throws Exception {
+    	int  percentage = (int)(getRawIntAnalogValue(analogPin)/17.99);
+    	return percentage;
+    }
+
+    
+    
+    /**
      * Get a specific pin parameter
      * 
      * @param myPin

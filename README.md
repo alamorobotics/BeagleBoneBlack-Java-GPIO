@@ -34,6 +34,12 @@ BB-AR-GPI is applied and the Slot number is: 9
 
 Beta stage...
 
+Version 0.13 Read analog values.
+Example where a joystick from Sparkfun is read.
+Bugfixes,
+Updated the BB-AR-GPIO_end.txt file to avoid collision with the analog cape-bone-iio DTS.
+Copy the DTS file automatically to /lib/firmware/...
+
 Version 0.12 Input example.
 
 Version 0.11 Output example.

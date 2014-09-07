@@ -15,14 +15,24 @@ public class pinInfo {
 	public static final String SLOTS_PATH = "/sys/devices/bone_capemgr.9/slots";
 	public static final String PINS_PATH = "/sys/kernel/debug/pinctrl/44e10800.pinmux/pins";
 	
+	// Direction
+	public static final String INPUT = "INPUT";
+	public static final String OUTPUT = "OUTPUT";
+	
 	// Pullup type...
 	public static final String PULLUP = "0x37";
 	public static final String PULLDOWN = "0x27";
 	public static final String NONE = "0x2F";
 
-	// Direction
-	public static final String INPUT = "INPUT";
-	public static final String OUTPUT = "OUTPUT";
+	// Analog stuff
+	public static final String ANALOG_START_PATH = "/sys/devices/ocp.3";
+	public static final String ANALOG0 = "AIN0";
+	public static final String ANALOG1 = "AIN1";
+	public static final String ANALOG2 = "AIN2";
+	public static final String ANALOG3 = "AIN3";
+	public static final String ANALOG4 = "AIN4";
+	public static final String ANALOG5 = "AIN5";
+	public static final String ANALOG6 = "AIN6";	
 	
 	// Example data, may or may not be accurate...
 	public String pinHeader = "P9_12";

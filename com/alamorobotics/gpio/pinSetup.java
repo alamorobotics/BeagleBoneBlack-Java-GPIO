@@ -8,6 +8,8 @@
 
 package com.alamorobotics.gpio;
 
+import static java.nio.file.FileVisitResult.CONTINUE;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
@@ -15,6 +17,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.file.FileSystems;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.PathMatcher;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -32,7 +42,11 @@ public class pinSetup {
 	public static final String RESOURCE_PATH = "com/alamorobotics/gpio/";
 	public static final String DTS_SLOT_NAME = "BB-AR-GPIO";
 	public static final String CAPE_BONE_IIO = "cape-bone-iio";
+	public static final String DTS_TARGET_DIR = "/lib/firmware/";
 
+
+	private static String analogPath = null;	
+	
 	/**
 	 * Make a DTS file...
 	 * 
@@ -159,7 +173,7 @@ public class pinSetup {
 	 */
     public static ArrayList<String> getSlots() throws Exception {
     	
-    	ArrayList<String> mySlots = new ArrayList<>();
+    	ArrayList<String> mySlots = new ArrayList<String>();
         try{
             BufferedReader br = new BufferedReader ( new FileReader(pinInfo.SLOTS_PATH));
             String line = br.readLine();
@@ -177,7 +191,7 @@ public class pinSetup {
     }		
 	
     /**
-     * Check if Slot is applied.
+     * Check if our DTS is applied.
      * 
      * @return
      * @throws Exception
@@ -194,7 +208,25 @@ public class pinSetup {
     	return false;
     }
     
-
+    /**
+     * Check if the Analog DTS is applied.
+     * 
+     * @return
+     * @throws Exception
+     */
+    public static boolean isAnalogApplied() throws Exception {
+    	
+    	ArrayList<String> slots = getSlots();
+    	
+    	for (String theSlot : slots ) {
+    		if (theSlot.indexOf(CAPE_BONE_IIO) > 0) {
+    			return true;
+    		}
+    	}
+    	return false;
+    }
+        
+    
     /**
      * Returns number for slot.
      * 
@@ -225,6 +257,7 @@ public class pinSetup {
     }
 
     /**
+     * Add our DTS file.
      * 
      * @throws Exception
      */
@@ -237,16 +270,36 @@ public class pinSetup {
     }
     
     /**
+     * Add the Analog DTS file.
+     * 
+     * @throws Exception
+     */
+    public static void AddAnalogDTS() throws Exception {
+		// Try removing slot.
+		if (!echoValue(pinInfo.SLOTS_PATH, CAPE_BONE_IIO)) {
+			throw new Exception("Unable to add slot " + CAPE_BONE_IIO);
+		}    	
+    }
+    
+    /**
      * Try compiling the DTs file.
      * 
      * @throws Exception
      */
     public static void compileDTS() throws Exception {
+    	
+    	// Compile the file.
        	String compileDTSCommand = "dtc -O dtb -o " + DTS_SLOT_NAME + "-00A0.dtbo -b 0 -@ " + DTS_SLOT_NAME + ".dts";
-       	
        	if (!executeCommand(compileDTSCommand)) {
        		throw new Exception("Unable to compile the DTS file.");
        	}
+       	
+       	// Copy to the DTS target.
+       	String copyDTStoTarget = "cp " + DTS_SLOT_NAME + "-00A0.dtbo " + DTS_TARGET_DIR;
+       	if (!executeCommand(copyDTStoTarget)) {
+       		throw new Exception("Unable to copy the DTS file to " + DTS_TARGET_DIR);
+       	}
+
        	
     }
     
@@ -345,5 +398,93 @@ public class pinSetup {
 		}
     	return value;
     }
+    
+    /**
+     * Find the pat to the analog pins...
+     * 
+     * @return
+     * @throws Exception
+     */
+    public static String getAnalogPath() throws Exception {
+    	
+    	// Has it been found ?
+    	if (analogPath == null) {
+    		// Search for first analog pin.
+            Path startingDir = Paths.get(pinInfo.ANALOG_START_PATH);
+            String pattern = pinInfo.ANALOG0;
+
+            // Use Java examples to find directory
+            Finder finder = new Finder(pattern);
+            Files.walkFileTree(startingDir, finder);
+        	
+            // Did we found something ?
+            if (finder.getLastMatch() != null && finder.getLastMatch().length() > 5) {
+            	analogPath = finder.getLastMatch().substring(0, finder.getLastMatch().length() - 5);
+            }
+    	}
+    	
+    	// Return path...
+    	return analogPath;
+    }
+    
+    
+    /**
+     * Convenient example I found on the in-ter-net...
+     * 
+     * @author Java example
+     *
+     */
+	public static class Finder extends SimpleFileVisitor<Path> {
+
+		private final PathMatcher matcher;
+		private Path lastMatch = null;
+
+		Finder(String pattern) {
+			matcher = FileSystems.getDefault()
+					.getPathMatcher("glob:" + pattern);
+		}
+
+		// Compares the glob pattern against
+		// the file or directory name.
+		void find(Path file) {
+			Path name = file.getFileName();
+			if (name != null && matcher.matches(name)) {
+				lastMatch = file;
+			}
+		}
+
+		// Prints the total number of
+		// matches to standard out.
+		String getLastMatch() {
+			if (lastMatch != null) {
+				return lastMatch.toString();
+			} else {
+				return null;
+			}
+		}
+
+		// Invoke the pattern matching
+		// method on each file.
+		@Override
+		public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+			find(file);
+			return CONTINUE;
+		}
+
+		// Invoke the pattern matching
+		// method on each directory.
+		@Override
+		public FileVisitResult preVisitDirectory(Path dir,
+				BasicFileAttributes attrs) {
+			find(dir);
+			return CONTINUE;
+		}
+
+		@Override
+		public FileVisitResult visitFileFailed(Path file, IOException exc) {
+			System.err.println(exc);
+			return CONTINUE;
+		}
+	}
     
 }
