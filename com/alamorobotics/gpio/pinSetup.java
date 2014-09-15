@@ -12,6 +12,7 @@ import static java.nio.file.FileVisitResult.CONTINUE;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -39,8 +40,10 @@ public class pinSetup {
 	// Setup stuff
 	public static final String DTS_START = "BB-AR-GPIO_start.txt";
 	public static final String DTS_END = "BB-AR-GPIO_end.txt";
+	public static final String DTS_PWM = "BB-AR-PWM.txt";
 	public static final String RESOURCE_PATH = "com/alamorobotics/gpio/";
 	public static final String DTS_SLOT_NAME = "BB-AR-GPIO";
+	public static final String PWM_SLOT_NAME = "BB-AR-PWM";
 	public static final String CAPE_BONE_IIO = "cape-bone-iio";
 	public static final String DTS_TARGET_DIR = "/lib/firmware/";
 
@@ -50,8 +53,6 @@ public class pinSetup {
 	/**
 	 * Make a DTS file...
 	 * 
-	 * @param fileName
-	 * @param pins
 	 * @throws Exception 
 	 */
 	public static void makeDTSfile() throws Exception {
@@ -101,6 +102,38 @@ public class pinSetup {
 		}
 	}
 
+	/**
+	 * Copy the PWM file...
+	 * 
+	 * @throws Exception 
+	 */
+	public static void copyPWMDTSfile() throws Exception {
+
+		String fileName = PWM_SLOT_NAME + ".dts";
+
+		// The resource, the pwm templates.
+		ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+		URL dtsPWM= classloader.getResource(RESOURCE_PATH + DTS_PWM);
+
+		try {
+			
+			// Read start template
+			FileWriter fw = new FileWriter(fileName);
+			BufferedReader br = new BufferedReader(new InputStreamReader(dtsPWM.openStream()));
+			String line = br.readLine();
+			while (line != null) {
+				fw.write(line + System.getProperty("line.separator"));
+				fw.flush();
+				line = br.readLine();
+			}
+			br.close();
+			fw.close();
+
+		} catch (Exception e) {
+			throw new Exception("Unable to create PWM DTS file.");
+		}
+	}	
+	
 	/**
 	 * Export pins and set correct in/out...
 	 * 
@@ -165,6 +198,36 @@ public class pinSetup {
 			throw new Exception("Unable to unexport pin " + myPin.gpioPinNum);
 		}
 	}
+
+	/**
+	 * Export PWM
+	 * 	
+	 * @throws Exception 
+	 */
+	public static void exportPWM() throws Exception {
+		
+		for (int i=0 ; i<6 ; i++) {
+			// Try export pin.
+			if (!echoValue(pinInfo.PWM_PATH + "/export", "" + i)) {
+				throw new Exception("Unable to export PWM " + i);
+			}		
+		}
+	}	
+
+	/**
+	 * Unexport PWM
+	 * 	
+	 * @throws Exception 
+	 */
+	public static void unexportPWM() throws Exception {
+		
+		for (int i=0 ; i<6 ; i++) {
+			// Try export pin.
+			if (!echoValue(pinInfo.PWM_PATH + "/unexport", "" + i)) {
+				throw new Exception("Unable to unexport PWM " + i);
+			}		
+		}
+	}		
 	
 	/**
 	 * Get a list of slots...
@@ -207,6 +270,26 @@ public class pinSetup {
     	}
     	return false;
     }
+
+    
+    /**
+     * Check if PWM is applied.
+     * 
+     * @return
+     * @throws Exception
+     */
+    public static boolean isPWMApplied() throws Exception {
+    	
+    	ArrayList<String> slots = getSlots();
+    	
+    	for (String theSlot : slots ) {
+    		if (theSlot.indexOf(PWM_SLOT_NAME) > 0) {
+    			return true;
+    		}
+    	}
+    	return false;
+    }
+    
     
     /**
      * Check if the Analog DTS is applied.
@@ -226,6 +309,7 @@ public class pinSetup {
     	return false;
     }
         
+
     
     /**
      * Returns number for slot.
@@ -243,9 +327,10 @@ public class pinSetup {
     		}
     	}
     	return "None";
-    }
+    }    
     
     /**
+     * Remove DTS slot
      * 
      * @throws Exception
      */
@@ -256,13 +341,14 @@ public class pinSetup {
 		}    	
     }
 
+
     /**
      * Add our DTS file.
      * 
      * @throws Exception
      */
     public static void AddDTS() throws Exception {
-		// Try removing slot.
+		// Try adding slot.
 		if (!echoValue(pinInfo.SLOTS_PATH, DTS_SLOT_NAME)) {
 			throw new Exception("Unable to add slot " + DTS_SLOT_NAME);
 		}    	
@@ -275,11 +361,24 @@ public class pinSetup {
      * @throws Exception
      */
     public static void AddAnalogDTS() throws Exception {
-		// Try removing slot.
+		// Try adding slot.
 		if (!echoValue(pinInfo.SLOTS_PATH, CAPE_BONE_IIO)) {
 			throw new Exception("Unable to add slot " + CAPE_BONE_IIO);
 		}    	
     }
+
+    
+    /**
+     * Add the PWM DTS file.
+     * 
+     * @throws Exception
+     */
+    public static void AddPWMDTS() throws Exception {
+		// Try adding slot.
+		if (!echoValue(pinInfo.SLOTS_PATH, PWM_SLOT_NAME)) {
+			throw new Exception("Unable to add slot " + CAPE_BONE_IIO);
+		}    	
+    }    
     
     /**
      * Try compiling the DTs file.
@@ -288,19 +387,51 @@ public class pinSetup {
      */
     public static void compileDTS() throws Exception {
     	
+    	compileDTSfile(DTS_SLOT_NAME);
+    	
+    }    
+
+    /**
+     * Try compiling the DTs file.
+     * 
+     * @throws Exception
+     */
+    public static void compilePWMDTS() throws Exception {
+    	
+    	compileDTSfile(PWM_SLOT_NAME);
+    	
+    }    
+    
+    /**
+     * Try compiling the DTs file.
+     * 
+     * @throws Exception
+     */
+    public static void compileDTSfile(String dtsFile) throws Exception {
+    	
+    	
     	// Compile the file.
-       	String compileDTSCommand = "dtc -O dtb -o " + DTS_SLOT_NAME + "-00A0.dtbo -b 0 -@ " + DTS_SLOT_NAME + ".dts";
+       	String compileDTSCommand = "dtc -O dtb -o " + dtsFile + "-00A0.dtbo -b 0 -@ " + dtsFile + ".dts";
        	if (!executeCommand(compileDTSCommand)) {
        		throw new Exception("Unable to compile the DTS file.");
        	}
        	
        	// Copy to the DTS target.
-       	String copyDTStoTarget = "cp " + DTS_SLOT_NAME + "-00A0.dtbo " + DTS_TARGET_DIR;
+       	String copyDTStoTarget = "cp " + dtsFile + "-00A0.dtbo " + DTS_TARGET_DIR;
        	if (!executeCommand(copyDTStoTarget)) {
        		throw new Exception("Unable to copy the DTS file to " + DTS_TARGET_DIR);
        	}
+    }
+    
 
-       	
+    /**
+     * Test to see if PWM is exported.
+     * 
+     * @return
+     */
+    public static boolean isPWMExported() {
+    	File testDir = new File(pinInfo.PWM_P9_22);
+    	return testDir.isDirectory();
     }
     
     /**
@@ -400,7 +531,7 @@ public class pinSetup {
     }
     
     /**
-     * Find the pat to the analog pins...
+     * Find the path to the analog pins...
      * 
      * @return
      * @throws Exception
@@ -427,6 +558,32 @@ public class pinSetup {
     	return analogPath;
     }
     
+    /**
+     * Test to see if the PWM DTS is compiled
+     * 
+     * @return
+     * @throws Exception
+     */
+    public static boolean isPWMCompiled() throws Exception {
+
+    	String pwmPath = "***";
+    	
+		// Search for PWM DTS.
+        Path startingDir = Paths.get(DTS_TARGET_DIR);
+        String pattern = PWM_SLOT_NAME + "*";
+
+        // Use Java examples to find directory
+        Finder finder = new Finder(pattern);
+        Files.walkFileTree(startingDir, finder);
+    	
+        // Did we found something ?
+        if (finder.getLastMatch() != null) {
+        	pwmPath = finder.getLastMatch();
+        }
+    	
+    	// Test if found.
+    	return !"***".equals(pwmPath);
+    }    
     
     /**
      * Convenient example I found on the in-ter-net...

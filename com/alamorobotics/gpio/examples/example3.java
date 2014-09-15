@@ -22,14 +22,14 @@ import com.alamorobotics.gpio.pinSetup;
  * Hook P9_11 to Pin 1 on the ULN2803A, then pin 18 the ULN2803A to the LED followed by a 200 ohm resistor to P9_07.
  * Hook P9_12 to Pin 2 on the ULN2803A, then pin 17 the ULN2803A to the LED followed by a 200 ohm resistor to P9_07.
  * 
- * Hook up three push buttons, P9_21 will be the button to read to see if we want to exit the program.
+ * Hook up three push buttons, P9_26 will be the button to read to see if we want to exit the program.
  * 
- * P9_21 does not have a pullup so you need to add an external.
+ * P9_26 does not have a pullup so you need to add an external.
  * Connect ground to a 10K resistor, connect the resistor to one side of pushbutton 1.
- * On this side of the pushbutton, connect P9_21.
+ * On this side of the pushbutton, connect P9_26.
  * On the other side of the push button, connect it to +3.3V, for example P9_03...
  * 
- * P9_22 have an internal pull up enabled, connect this side to pushbutton 2 and the other side of the button to ground.
+ * P9_24 have an internal pull up enabled, connect this side to pushbutton 2 and the other side of the button to ground.
  * P9_23 have an internal pull down enabled, connect this side to pushbutton 3 and the other side of the button to +3.3V, P9_03.
  * 
  * Compile,
@@ -68,18 +68,18 @@ public class example3 {
 		
 		// Now for the input pins...
 		// Make direction input and disable internal pullups. 
-		pinInfo pinP9_21 = pinInfo.getPinInfo("P9_21");
-		pinP9_21.direction = pinInfo.INPUT;
-		pinP9_21.pullupType = pinInfo.NONE;
-		pinP9_21.comment = "Button 01";
-		pinInfo.reservePin(pinP9_21);
+		pinInfo pinP9_26 = pinInfo.getPinInfo("P9_26");
+		pinP9_26.direction = pinInfo.INPUT;
+		pinP9_26.pullupType = pinInfo.NONE;
+		pinP9_26.comment = "Button 01";
+		pinInfo.reservePin(pinP9_26);
 		
 		// Make direction input and enable pullup, this will default to 1. 	
-		pinInfo pinP9_22 = pinInfo.getPinInfo("P9_22");
-		pinP9_22.direction = pinInfo.INPUT;
-		pinP9_22.pullupType = pinInfo.PULLUP;
-		pinP9_22.comment = "Button 02";
-		pinInfo.reservePin(pinP9_22);
+		pinInfo pinP9_24 = pinInfo.getPinInfo("P9_24");
+		pinP9_24.direction = pinInfo.INPUT;
+		pinP9_24.pullupType = pinInfo.PULLUP;
+		pinP9_24.comment = "Button 02";
+		pinInfo.reservePin(pinP9_24);
 
 		// Make direction input and enable pulldown, this will default to 0. 	
 		pinInfo pinP9_23 = pinInfo.getPinInfo("P9_23");
@@ -119,14 +119,14 @@ public class example3 {
 		pinSetup.exportPins();
 
 		// Loop until pushbutton 1 is pressed.
-		while (!pinControl.readPin(pinP9_21)) {
+		while (!pinControl.readPin(pinP9_26)) {
 			// Write status,
-			System.out.println("pinControl.readPin(P9_21) " + pinControl.readPin(pinP9_21));
-			System.out.println("pinControl.readPin(P9_22) " + pinControl.readPin(pinP9_22));
+			System.out.println("pinControl.readPin(P9_26) " + pinControl.readPin(pinP9_26));
+			System.out.println("pinControl.readPin(P9_24) " + pinControl.readPin(pinP9_24));
 			System.out.println("pinControl.readPin(P9_23) " + pinControl.readPin(pinP9_23));
 			System.out.println();
 			// Set LEDs
-			pinControl.setPin(pinP9_11, pinControl.readPin(pinP9_22));
+			pinControl.setPin(pinP9_11, pinControl.readPin(pinP9_24));
 			pinControl.setPin(pinP9_12, pinControl.readPin(pinP9_23));
 			// Sleep for a bit, make sure to hold push button long enough to poll the state.
 	    	Thread.sleep(100);
